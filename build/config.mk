@@ -4,6 +4,7 @@
 #检测系统
 OS = $(shell uname)
 
+
 #设置是否调试
 ifeq ($(DEBUG), 0)
 	DEBUG_FLAGS := -O3
@@ -153,6 +154,21 @@ ifeq ($(platform), x86_64)
 	OUT_DIR			:= ./../../bin/$(OS)_$(arch)_$(platform)
 endif
 
+## Apple Silicon
+ifeq ($(platform), arm64)
+	CC	:= gcc
+	CPP := g++
+	AR	:= ar
+	ASM	:= gcc
+	
+	ARCH_DEF	 := -DARM64 -DARCH_AARCH64=1
+	arch		 := aarch64
+	EXTRA_CFLAGS := -arch arm64 $(ARCH_DEF)
+	EXTRA_LFLAGS := -arch arm64
+	EXTRA_AFLAGS := -arch arm64  $(ARCH_DEF)
+	LIB_DIR		 := ./../../out/$(OS)_$(arch)_$(platform)
+	OUT_DIR		 := ./../../bin/$(OS)_$(arch)_$(platform)
+endif
 endif
 
 ###IOS平台
@@ -262,6 +278,11 @@ endif
 ###MAC64架构	
 ifeq ($(platform), x86_64)
 EXTRA_LFLAGS+=-DARCH_X86_64=1 -DARCH_ARM=0 -DARCH_AARCH64=0
+endif
+
+###ARM64架构	
+ifeq ($(platform), arm64)
+EXTRA_LFLAGS+=-DARCH_X86_64=0 -DARCH_ARM=0 -DARCH_AARCH64=1
 endif
 
 ###IOS平台

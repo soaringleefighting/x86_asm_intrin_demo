@@ -47,13 +47,18 @@ ASMFLAGS += $(EXTRA_AFLAGS)
 #以下获取OBJS文件的方式适用于含有少量文件的编译
 SRCS = $(DEMOSRC)/os_time_sdk.c			      
 SRCS += $(DEMOSRC)/demo.c  							\
-		$(SRCDIR)/ff_pred_dc.c						\
-		$(SRCDIR)/ff_pred_dc_sse2_intrinsic.c	
-
-
+		$(SRCDIR)/ff_pred_dc.c						
+			
 ifeq ($(platform), x86_32)
+SRCS += $(SRCDIR)/ff_pred_dc_sse2_intrinsic.c
+ifeq ($(PUREC), 0)
 SRCS += $(SRCDIR)/ff_pred_dc_x86.asm				\
 		$(SRCDIR)/ff_pred_dc_x86_org.asm
+endif
+endif
+
+ifeq ($(platform), arm64)
+SRCS += $(SRCDIR)/ff_pred_dc_neon_intrinsic.c
 endif
 
 #ifeq ($(platform), x86_64)

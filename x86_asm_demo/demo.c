@@ -9,12 +9,13 @@ void x264_ff_pred_dc_8x8(unsigned char *_src, const unsigned char *_top,
 	const unsigned char *_left,
 	int stride, int log2_size);
 
-/* Ð´·¨Ò»£º²ÉÓÃx86inc.asm */
+#if ARCH_X86
+/* Ð´ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½x86inc.asm */
 void x264_pred_dc_8x8_x86_ssse3(unsigned char *_src, const unsigned char *_top,
 	const unsigned char *_left,
 	int stride, int log2_size);
 
-/* Ð´·¨¶þ£ºÔ­Ê¼assembly */
+/* Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­Ê¼assembly */
 void x264_ff_pred_dc_8x8_x86_sse2(unsigned char *_src, const unsigned char *_top,
 	const unsigned char *_left,
 	int stride, int log2_size);
@@ -23,12 +24,20 @@ void x264_ff_pred_dc_8x8_x86_sse2(unsigned char *_src, const unsigned char *_top
 void x264_ff_pred_dc_8x8_sse2_intrinsic(unsigned char *_src, const unsigned char *_top,
 	const unsigned char *_left,
 	int stride, int log2_size);
+#endif
+
+#if ARCH_AARCH64
+/* x86 intrinsic */
+void x264_ff_pred_dc_8x8_neon_intrinsic(unsigned char *_src, const unsigned char *_top,
+	const unsigned char *_left,
+	int stride, int log2_size);
+#endif
 
 
 static void GenerateMatrix(unsigned char *src, unsigned char *top,unsigned char *left, unsigned char *dst, int stride, int height)
 {
 	int i = 0;
-	srand((int)time(0)); // ÉèÖÃrand()²úÉúËæ»úÊýµÄËæ»úÊýÖÖ×Ó
+	srand((int)time(0)); // ï¿½ï¿½ï¿½ï¿½rand()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	for (i = 0; i < height*stride; i++)
 	{
@@ -108,7 +117,7 @@ int main(int argc, char* argv[])
 	os_sdk_starttimer(&pTimer);
 	for (i = 0; i < times; i++)
 	{
-		// CÊµÏÖ
+		// CÊµï¿½ï¿½
 		x264_ff_pred_dc_8x8(src, top, left, 8, 3);
 	}
 	time_c = os_sdk_stoptimer(&pTimer);
@@ -123,11 +132,12 @@ int main(int argc, char* argv[])
 		printf("\n");
 	}
 
+#if ARCH_X86
 	os_sdk_starttimer(&pTimer);
 	for (i = 0; i < times; i++)
 	{
-		// x86´¿»ã±àÓÅ»¯
-		x264_pred_dc_8x8_x86_ssse3(dst, top, left, 8, 3); // assembly»ã±àºóÐ§ÂÊÌáÉý2.5±¶×óÓÒ¡£
+		// x86ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å»ï¿½
+		x264_pred_dc_8x8_x86_ssse3(dst, top, left, 8, 3); // assemblyï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2.5ï¿½ï¿½ï¿½ï¿½ï¿½Ò¡ï¿½
 		//x264_ff_pred_dc_8x8_x86_sse2(dst, top, left, 8, 3);
 	}
 	time_opt = os_sdk_stoptimer(&pTimer);
@@ -136,8 +146,8 @@ int main(int argc, char* argv[])
  	os_sdk_starttimer(&pTimer);
  	for (i = 0; i < times; i++)
  	{
- 		// x86 intrinsic»ã±à
- 		x264_ff_pred_dc_8x8_sse2_intrinsic(dst, top, left, 8, 3); // intrinsc»ã±àºóÐ§ÂÊÌáÉý5±¶×óÓÒ¡£
+ 		// x86 intrinsicï¿½ï¿½ï¿½
+ 		x264_ff_pred_dc_8x8_sse2_intrinsic(dst, top, left, 8, 3); // intrinscï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½5ï¿½ï¿½ï¿½ï¿½ï¿½Ò¡ï¿½
  	}
  	time_opt_intrin = os_sdk_stoptimer(&pTimer);
 
@@ -150,8 +160,30 @@ int main(int argc, char* argv[])
 		}
 		printf("\n");
 	}
+#endif
 
-	// ´¿C½á¹ûºÍSSEÓÅ»¯½á¹û ÕýÈ·ÐÔ/Ò»ÖÂÐÔ±È½Ï
+#if ARCH_AARCH64
+	os_sdk_starttimer(&pTimer);
+	for (i = 0; i < times; i++)
+	{
+	
+		x264_ff_pred_dc_8x8_neon_intrinsic(dst, top, left, 8, 3); 
+
+	}
+	time_opt_intrin = os_sdk_stoptimer(&pTimer);
+
+	printf("arm neon intrinsic: \t\n");
+	for (i = 0; i < 8 ; i++)
+	{
+		for (j = 0; j < 8; j++)
+		{
+			printf("%d\t", dst[j+i*8]);
+		}
+		printf("\n");
+	}
+#endif
+
+	// ï¿½ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½SSEï¿½Å»ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È·ï¿½ï¿½/Ò»ï¿½ï¿½ï¿½Ô±È½ï¿½
 	for (i = 0; i < 8; i++) // 4
 	{
 		for (j = 0; j < 8; j++)
