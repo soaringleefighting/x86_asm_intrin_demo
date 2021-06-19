@@ -22,9 +22,9 @@ make target_plat=mac platform=arm64
 
 ### 性能比较
 
-macOS平台：纯C算法循环500000次，耗时28ms，aarch64 neon intrinsic耗时1ms。
+1、macOS平台：纯C算法循环500000次，耗时28ms，aarch64 neon intrinsic耗时1ms。
 
-X86平台：
+2、X86平台：
 
 （1）windows平台：纯C算法循环500000次，耗时11ms，ssse3 asm耗时4ms, ssse3 intrinsic耗时1ms。
 
