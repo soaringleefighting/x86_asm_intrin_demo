@@ -164,7 +164,7 @@ ifeq ($(platform), arm64)
 	ARCH_DEF	 := -DARM64 -DARCH_AARCH64=1
 	arch		 := aarch64
 	EXTRA_CFLAGS := -arch arm64 $(ARCH_DEF)
-	EXTRA_LFLAGS := -arch arm64
+	EXTRA_LFLAGS := -arch arm64 
 	EXTRA_AFLAGS := -arch arm64  $(ARCH_DEF)
 	LIB_DIR		 := ./../../out/$(OS)_$(arch)_$(platform)
 	OUT_DIR		 := ./../../bin/$(OS)_$(arch)_$(platform)

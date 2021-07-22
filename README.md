@@ -2,11 +2,11 @@
 
 This project is the demo for x86 assembly and intrinsic optimization.
 
-### 支持平台
+### 一、支持平台
 
 Windows, Linux, macOS(Apple Silicon M1)
 
-### 各平台编译说明
+### 二、各平台编译说明
 
 1、Windows
 
@@ -20,7 +20,7 @@ make platform=x86_32
 
 make target_plat=mac platform=arm64
 
-### 性能比较
+### 三、性能比较
 
 1、macOS平台：纯C算法循环500000次，耗时28ms，aarch64 neon intrinsic耗时1ms。
 
@@ -30,7 +30,7 @@ make target_plat=mac platform=arm64
 
 （2）Linux平台：纯C算法循环500000次，耗时21ms,ssse3 asm耗时3ms, ssse3 intrinsic耗时2ms。
 
-### 疑问与发现
+### 四、疑问与发现
 
 1、根据不同系统平台的测试结果可知：
 
